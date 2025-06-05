@@ -21,7 +21,7 @@ git clone https://github.com/ViniMac3do/prjHealthCareWeb
 cd prjHealthCareWeb
 
 # 2. Copie o arquivo de exemplo e gere a chave da aplicação
-cp .env.example .env
+copy .env.example .env
 php artisan key:generate
 
 # 3. Instale as dependências
