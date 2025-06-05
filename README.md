@@ -64,6 +64,6 @@ Após esses passos o projeto estará rodando mesmo sem `vendor`, `node_modules` 
 | `Cannot find module...` | Pasta `node_modules/` ausente | Rode `npm install` |
 | `APP_KEY missing` | Esqueceu de gerar a chave | Rode `php artisan key:generate` |
 | Erro 500 ao acessar rota | Config do `.env` incorreta ou migrations n\xC3\xA3o rodaram | Revise o `.env` e rode `php artisan migrate` |
-| Arquivos est\xC3\xA1ticos 404 | Faltou `npm run dev/build` ou `storage:link` | Rode os comandos correspondentes |
+| Arquivos estáticos 404 | Faltou `npm run dev/build` ou `storage:link` | Rode os comandos correspondentes |
 
-Seguindo esse fluxo qualquer colaborador consegue levantar o projeto do zero sem precisar versionar diret\xC3\xB3rios grandes ou segredos.
+Seguindo esse fluxo qualquer colaborador consegue levantar o projeto do zero sem precisar versionar diretórios grandes ou segredos.
