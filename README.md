@@ -1,61 +1,69 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# prjHealthCareWeb
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este repositório contém uma aplicação Laravel que utiliza Node.js para compilação de assets. As dependências de PHP (vendor) e JavaScript (node_modules), assim como arquivos de ambiente (.env), não são versionados.
 
-## About Laravel
+Abaixo está um guia rápido para quem acabou de clonar o projeto e precisa configurar o ambiente local.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Pré-requisitos
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Ferramenta                  | Versão sugerida | Comando para verificar |
+| --------------------------- | ---------------- | ---------------------- |
+| PHP                         | ≥ 8.2         | `php -v`               |
+| Composer                    | ≥ 2.7         | `composer -V`          |
+| Node.js + npm ou pnpm       | ≥ 20 LTS      | `node -v` / `npm -v`   |
+| MySQL/MariaDB               | 10.x / 8.x       | `mysql -V`             |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Passo a passo após clonar
 
-## Learning Laravel
+```cmd
+:: 1. Clone o repositório
+git clone https://github.com/ViniMac3do/prjHealthCareWeb
+cd prjHealthCareWeb
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+:: 2. Copie o arquivo de ambiente de exemplo
+copy .env.example .env   :: se não houver .env.example, crie um novo .env
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+:: 3. Gere a chave da aplicação
+php artisan key:generate
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+:: 4. Instale as dependências PHP
+composer install         :: usa composer.json para recriar vendor/
 
-## Laravel Sponsors
+:: 5. Instale as dependências JavaScript
+npm install              :: recria node_modules/
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+:: 6. Compile os assets (modo desenvolvimento)
+npm run dev              :: ou  npm run build  para produção
 
-### Premium Partners
+:: 7. Ajuste as credenciais do banco no .env
+notepad .env             :: DB_DATABASE, DB_USERNAME, DB_PASSWORD
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+:: 8. Rode as migrations (e seeds, se existirem)
+php artisan migrate --seed
 
-## Contributing
+:: 9. Crie o link de storage para uploads públicos
+php artisan storage:link
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+:: 10. Suba o servidor local
+php artisan serve        :: http://127.0.0.1:8000
+```
 
-## Code of Conduct
+Após esses passos o projeto estará rodando mesmo sem `vendor`, `node_modules` ou `.env` versionados. Os comandos `composer install` e `npm install` baixarão todas as dependências, e o arquivo `.env` será criado localmente a partir do exemplo.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## O que colocar no repositório
 
-## Security Vulnerabilities
+- `.env.example` com valores genéricos e chaves vazias;
+- `README.md` com o passo a passo de instalação;
+- arquivos em `database/seeders/` para popular o banco com dados de teste (opcional).
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Problemas comuns
 
-## License
+| Sintoma | Causa | Solução |
+| --- | --- | --- |
+| `Class not found...` | Pasta `vendor/` ausente | Rode `composer install` |
+| `Cannot find module...` | Pasta `node_modules/` ausente | Rode `npm install` |
+| `APP_KEY missing` | Esqueceu de gerar a chave | Rode `php artisan key:generate` |
+| Erro 500 ao acessar rota | Config do `.env` incorreta ou migrations n\xC3\xA3o rodaram | Revise o `.env` e rode `php artisan migrate` |
+| Arquivos est\xC3\xA1ticos 404 | Faltou `npm run dev/build` ou `storage:link` | Rode os comandos correspondentes |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Seguindo esse fluxo qualquer colaborador consegue levantar o projeto do zero sem precisar versionar diret\xC3\xB3rios grandes ou segredos.
