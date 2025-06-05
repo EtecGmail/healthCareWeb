@@ -3,21 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Usuario;
 
 class UsuarioController extends Controller
 {
-    private function checkDuplicates(Request $request)
+    private function checkDuplicates(Request $request, $ignoreId = null)
     {
-        if (Usuario::where('email', $request->input('emailUsuario'))->exists()) {
+        if ($request->filled('emailUsuario') &&
+            Usuario::where('email', $request->input('emailUsuario'))
+            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()) {
             return response()->json(['erro' => 'E-mail já está cadastrado.'], 400);
         }
 
-        if (Usuario::where('cpf', $request->input('cpfUsuario'))->exists()) {
+        if ($request->filled('cpfUsuario') &&
+            Usuario::where('cpf', $request->input('cpfUsuario'))
+            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()) {
             return response()->json(['erro' => 'CPF já está cadastrado.'], 400);
         }
 
-        if (Usuario::where('cartao_sus', $request->input('cartaoSus'))->exists()) {
+        if ($request->filled('cartaoSus') &&
+            Usuario::where('cartao_sus', $request->input('cartaoSus'))
+            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()) {
             return response()->json(['erro' => 'Cartão SUS já está cadastrado.'], 400);
         }
 
@@ -25,11 +35,10 @@ class UsuarioController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(\App\Http\Requests\StoreUsuarioRequest $request)
     {
-        //This function consists of executing verification for duplicated variables
         $check = $this->checkDuplicates($request);
-        if($check){
+        if ($check) {
             return $check;
         }
 
@@ -42,7 +51,7 @@ class UsuarioController extends Controller
             'foto' => $request->input('fotoUsuario'),
             'genero' => $request->input('generoUsuario'),
             'email' => $request->input('emailUsuario'),
-            'senha' => $request->input('senhaUsuario'), // Ideal: usar bcrypt($request->input('senhaUsuario'))
+            'senha' => Hash::make($request->input('senhaUsuario')),
         ]);
 
         // Retorna o usuário criado em formato JSON com status 201 (Criado)
@@ -89,11 +98,10 @@ class UsuarioController extends Controller
         return response()->json($usuario);
     }
 
-    public function update(Request $request, $id)
+    public function update(\App\Http\Requests\UpdateUsuarioRequest $request, $id)
     {
-        //This function consists of executing verification for duplicated variables
-        $check = $this->checkDuplicates($request);
-        if($check){
+        $check = $this->checkDuplicates($request, $id);
+        if ($check) {
             return $check;
         }
 
@@ -109,7 +117,9 @@ class UsuarioController extends Controller
             $usuario->foto = $request->input('fotoUsuario', $usuario->foto);
             $usuario->genero = $request->input('generoUsuario', $usuario->genero);
             $usuario->email = $request->input('emailUsuario', $usuario->email);
-            $usuario->senha = $request->input('senhaUsuario', $usuario->senha); 
+            if ($request->filled('senhaUsuario')) {
+                $usuario->senha = Hash::make($request->input('senhaUsuario'));
+            }
 
             $usuario->save(); //save in the database
 
