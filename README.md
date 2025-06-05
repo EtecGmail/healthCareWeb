@@ -1,69 +1,87 @@
 # prjHealthCareWeb
 
-Este repositório contém uma aplicação Laravel que utiliza Node.js para compilação de assets. As dependências de PHP (vendor) e JavaScript (node_modules), assim como arquivos de ambiente (.env), não são versionados.
-
-Abaixo está um guia rápido para quem acabou de clonar o projeto e precisa configurar o ambiente local.
+Aplicação Laravel que expõe uma API REST para cadastro e gerenciamento de usuários.
+Este guia explica como preparar o ambiente, rodar o projeto localmente e testar
+os endpoints utilizando o Postman.
 
 ## Pré-requisitos
 
-| Ferramenta                  | Versão sugerida | Comando para verificar |
-| --------------------------- | ---------------- | ---------------------- |
-| PHP                         | ≥ 8.2         | `php -v`               |
-| Composer                    | ≥ 2.7         | `composer -V`          |
-| Node.js + npm ou pnpm       | ≥ 20 LTS      | `node -v` / `npm -v`   |
-| MySQL/MariaDB               | 10.x / 8.x       | `mysql -V`             |
+| Ferramenta             | Versão sugerida | Como verificar |
+| ---------------------- | --------------- | -------------- |
+| PHP                    | \>= 8.2         | `php -v`       |
+| Composer               | \>= 2.7         | `composer -V`  |
+| Node.js + npm ou pnpm  | \>= 20 LTS      | `node -v`      |
+| MySQL/MariaDB          | 10.x / 8.x      | `mysql -V`     |
 
-## Passo a passo após clonar
+## Instalação
 
-```cmd
-:: 1. Clone o repositório
+```bash
+# 1. Clone o repositório
 git clone https://github.com/ViniMac3do/prjHealthCareWeb
 cd prjHealthCareWeb
 
-:: 2. Copie o arquivo de ambiente de exemplo
-copy .env.example .env   :: se não houver .env.example, crie um novo .env
-
-:: 3. Gere a chave da aplicação
+# 2. Copie o arquivo de exemplo e gere a chave da aplicação
+cp .env.example .env
 php artisan key:generate
 
-:: 4. Instale as dependências PHP
-composer install         :: usa composer.json para recriar vendor/
+# 3. Instale as dependências
+composer install
+npm install
+npm run dev       # ou npm run build para produção
 
-:: 5. Instale as dependências JavaScript
-npm install              :: recria node_modules/
-
-:: 6. Compile os assets (modo desenvolvimento)
-npm run dev              :: ou  npm run build  para produção
-
-:: 7. Ajuste as credenciais do banco no .env
-notepad .env             :: DB_DATABASE, DB_USERNAME, DB_PASSWORD
-
-:: 8. Rode as migrations (e seeds, se existirem)
+# 4. Configure o banco no .env e execute as migrations
+# (ajuste DB_DATABASE, DB_USERNAME, DB_PASSWORD)
 php artisan migrate --seed
 
-:: 9. Crie o link de storage para uploads públicos
+# 5. Crie o link de storage e inicie o servidor
 php artisan storage:link
-
-:: 10. Suba o servidor local
-php artisan serve        :: http://127.0.0.1:8000
+php artisan serve   # http://127.0.0.1:8000
 ```
 
-Após esses passos o projeto estará rodando mesmo sem `vendor`, `node_modules` ou `.env` versionados. Os comandos `composer install` e `npm install` baixarão todas as dependências, e o arquivo `.env` será criado localmente a partir do exemplo.
+## Testando no Postman
 
-## O que colocar no repositório
+1. Importe a coleção `docs/HealthCareAPI.postman_collection.json` no Postman.
+2. Defina a variável `base_url` como `http://127.0.0.1:8000` (ou a URL onde a aplicação está rodando).
+3. Execute as requisições disponíveis na coleção para interagir com a API.
 
-- `.env.example` com valores genéricos e chaves vazias;
-- `README.md` com o passo a passo de instalação;
-- arquivos em `database/seeders/` para popular o banco com dados de teste (opcional).
+## Documentação da API
+
+### Usuários
+
+| Método | Endpoint                         | Descrição                    |
+| ------ | -------------------------------- | ---------------------------- |
+| GET    | `/api/usuarios`                  | Lista todos os usuários      |
+| GET    | `/api/usuarios/{id}`             | Busca usuário pelo ID        |
+| GET    | `/api/usuarios/email/{email}`    | Busca usuário pelo e-mail    |
+| POST   | `/api/usuarios`                  | Cadastra um novo usuário     |
+| PUT    | `/api/usuarios/{id}`             | Atualiza dados de um usuário |
+| DELETE | `/api/usuarios/{id}`             | Remove um usuário            |
+
+#### Exemplo de corpo para POST/PUT
+
+```json
+{
+  "nomeUsuario": "Fulano da Silva",
+  "cartaoSus": "1234567890",
+  "cpfUsuario": "12345678901",
+  "cepUsuario": "01001-000",
+  "fotoUsuario": "base64-ou-url",
+  "generoUsuario": "M",
+  "emailUsuario": "fulano@email.com",
+  "senhaUsuario": "senha123"
+}
+```
+
+As respostas são retornadas em JSON contendo os dados do usuário ou mensagens de erro quando aplicável.
 
 ## Problemas comuns
 
-| Sintoma | Causa | Solução |
-| --- | --- | --- |
-| `Class not found...` | Pasta `vendor/` ausente | Rode `composer install` |
-| `Cannot find module...` | Pasta `node_modules/` ausente | Rode `npm install` |
-| `APP_KEY missing` | Esqueceu de gerar a chave | Rode `php artisan key:generate` |
-| Erro 500 ao acessar rota | Config do `.env` incorreta ou migrations n\xC3\xA3o rodaram | Revise o `.env` e rode `php artisan migrate` |
-| Arquivos estáticos 404 | Faltou `npm run dev/build` ou `storage:link` | Rode os comandos correspondentes |
+| Sintoma                       | Causa                                     | Solução                          |
+| ----------------------------- | ----------------------------------------- | -------------------------------- |
+| `Class not found...`          | Pasta `vendor/` ausente                   | Rode `composer install`          |
+| `Cannot find module...`       | Pasta `node_modules/` ausente             | Rode `npm install`               |
+| `APP_KEY missing`             | Chave da aplicação não gerada             | Rode `php artisan key:generate`  |
+| Erro 500 ao acessar rota      | `.env` incorreto ou migrations não rodaram| Revise o `.env` e rode `php artisan migrate` |
+| Arquivos estáticos 404        | Faltou `npm run dev/build` ou `storage:link` | Execute os comandos correspondentes |
 
-Seguindo esse fluxo qualquer colaborador consegue levantar o projeto do zero sem precisar versionar diretórios grandes ou segredos.
+Seguindo estas orientações qualquer colaborador conseguirá levantar e testar o projeto do zero.
