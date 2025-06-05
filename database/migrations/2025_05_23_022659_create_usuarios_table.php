@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('usuarios', function (Blueprint $table) {
             $table->id(); // ID autoincremental
             $table->string('nome'); // nome do usuário
-            $table->string('cartao_sus'); // cartão do SUS
+            $table->string('cartao_sus')->unique(); // cartão do SUS
             $table->string('cpf')->unique(); // CPF único
             $table->string('cep'); // CEP do usuário
             $table->string('foto')->nullable(); // URL ou base64 da foto
