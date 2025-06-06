@@ -8,6 +8,12 @@
       "name": "Listar usuários",
       "request": {
         "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
         "url": "{{base_url}}/api/usuarios"
       }
     },
@@ -15,6 +21,12 @@
       "name": "Buscar usuário por ID",
       "request": {
         "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
         "url": "{{base_url}}/api/usuarios/1"
       }
     },
@@ -25,6 +37,10 @@
         "header": [
           {
             "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
             "value": "application/json"
           }
         ],
@@ -43,6 +59,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
           }
         ],
         "body": {
@@ -56,6 +76,12 @@
       "name": "Remover usuário",
       "request": {
         "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
         "url": "{{base_url}}/api/usuarios/1"
       }
     }
