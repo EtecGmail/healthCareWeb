@@ -43,6 +43,8 @@ php artisan serve   # http://127.0.0.1:8000
 1. Importe a coleção `docs/HealthCareAPI.postman_collection.json` no Postman.
 2. Defina a variável `base_url` como `http://127.0.0.1:8000` (ou a URL onde a aplicação está rodando).
 3. Execute as requisições disponíveis na coleção para interagir com a API.
+   Certifique-se de que cada requisição envie o cabeçalho `Accept: application/json`
+   para receber as respostas em formato JSON no Postman.
 
 ## Documentação da API
 
